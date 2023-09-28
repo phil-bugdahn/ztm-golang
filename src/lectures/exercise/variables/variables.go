@@ -25,4 +25,13 @@ package main
 import "fmt"
 
 func main() {
+	var color = "blue";
+	birthYear, age := 1982, 41
+	var (
+		firstInitial = 'P'
+		lastInitial = 'B'
+	)
+
+	var ageInDays int
+	ageInDays = 1000
 }
