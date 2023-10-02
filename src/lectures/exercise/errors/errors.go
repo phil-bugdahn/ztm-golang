@@ -15,3 +15,31 @@
 //* Use the `errors` package to generate errors
 
 package timeparse
+
+import (
+	"errors"
+	"strconv"
+	"strings"
+)
+
+type Time struct {
+	hour int
+	minute int
+	second int
+}
+
+func ParseTime(timeString string) (Time, error) {
+	components := strings.Split(timeString, ":")
+	if (len(components) != 3) {
+		return Time{}, errors.New("Time must have 3 components separated by a number")
+	} else {
+		hour, hourError := strconv.ParseInt(components[0], 10, 32)
+		minute, minuteError := strconv.ParseInt(components[1], 10, 32)
+		second, secondError := strconv.ParseInt(components[2], 10, 32)
+		if (hourError != nil || minuteError != nil || secondError != nil) {
+			return Time{}, errors.New("All time components must be numerical values")
+		} else {
+			return Time{int(hour), int(minute), int(second)}, nil
+		}
+	}
+}
