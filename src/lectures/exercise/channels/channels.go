@@ -27,6 +27,11 @@ func longCalculation(i Job) int {
 	return int(i) * 30
 }
 
+func runJob(i Job, resultChannel chan<- int) {
+	result := longCalculation(i)
+	resultChannel <- result
+}
+
 func makeJobs() []Job {
 	jobs := make([]Job, 0, 100)
 	for i := 0; i < 100; i++ {
@@ -35,7 +40,26 @@ func makeJobs() []Job {
 	return jobs
 }
 
+func getTotal(resultChannel chan int) int {
+	total := 0
+	for {
+		select {
+		case jobResult := <- resultChannel:
+			total += jobResult
+		case <-time.After(time.Second * 5):
+			return total
+		}
+	}
+}
+
 func main() {
+	resultChannel := make(chan int)
 	rand.Seed(time.Now().UnixNano())
 	jobs := makeJobs()
+	for i := 0; i < len(jobs); i++ {
+		go runJob(jobs[i], resultChannel)
+	}
+
+	total := getTotal(resultChannel)
+	fmt.Println("Total", total)
 }
